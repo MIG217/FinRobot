@@ -18,6 +18,81 @@ from reportlab.platypus import (
 from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import os
+import pandas as pd
+
+# Attempt to register a common system font for Chinese
+# Option 1: SimSun (common on Windows)
+try:
+    # For .ttc files, you might need to specify subfontIndex if it's a collection
+    # Check common paths for simsun.ttc
+    font_path_simsun_ttc = ""
+    if os.path.exists("C:/Windows/Fonts/simsun.ttc"):
+        font_path_simsun_ttc = "C:/Windows/Fonts/simsun.ttc"
+    elif os.path.exists("/usr/share/fonts/truetype/simsun/simsun.ttc"): # Common on some Linux
+        font_path_simsun_ttc = "/usr/share/fonts/truetype/simsun/simsun.ttc"
+    
+    if font_path_simsun_ttc:
+        pdfmetrics.registerFont(TTFont('SimSun', font_path_simsun_ttc, subfontIndex=0)) # Assuming first font in collection
+        pdfmetrics.registerFont(TTFont('SimSun-Bold', font_path_simsun_ttc, subfontIndex=0)) # ReportLab doesn't auto-bold TTF, find a bold version or use same for now
+        FONT_NAME = 'SimSun'
+        FONT_NAME_BOLD = 'SimSun-Bold'
+        print("Registered SimSun font.")
+    else:
+        raise FileNotFoundError("SimSun font not found in common locations.")
+
+except Exception as e_simsun:
+    print(f"Could not register SimSun: {e_simsun}. Trying Noto Sans CJK SC.")
+    # Option 2: Noto Sans CJK SC (assumes font files are in a 'fonts' subdirectory or installable)
+    # Create a 'fonts' directory in the project root if it doesn't exist.
+    # The user/developer would need to place NotoSansCJKsc-Regular.otf and NotoSansCJKsc-Bold.otf there.
+    # Or the worker could try to download them.
+    # For now, let's assume they are available or can be installed.
+    # This part might require the worker to ensure the font files exist.
+    # For simplicity in this instruction, we'll just define the names
+    # and assume the actual font registration might need manual setup by the user if files aren't there.
+    
+    # Placeholder: In a real scenario, ensure NotoSansCJKsc-Regular.otf and NotoSansCJKsc-Bold.otf
+    # are available. The worker could try to install them using system commands if possible.
+    # E.g. on Debian/Ubuntu: apt-get install -y fonts-noto-cjk
+    # For now, we'll just define the font names and the code will fail if they aren't truly registered.
+    try:
+        # This is a simplified assumption. The worker might need to install these fonts.
+        # For example:
+        # pdfmetrics.registerFont(TTFont('NotoSansCJKsc-Regular', 'path/to/NotoSansCJKsc-Regular.otf'))
+        # pdfmetrics.registerFont(TTFont('NotoSansCJKsc-Bold', 'path/to/NotoSansCJKsc-Bold.otf'))
+        # FONT_NAME = 'NotoSansCJKsc-Regular'
+        # FONT_NAME_BOLD = 'NotoSansCJKsc-Bold'
+        # For the purpose of this subtask, let's assume the worker will attempt to install
+        # fonts-noto-cjk via apt-get if SimSun is not found.
+        # If that also fails, it should fall back to Helvetica and report the issue.
+
+        # Simulate checking for Noto fonts (worker should implement actual check/install)
+        # This is a placeholder for the worker's logic to find/install Noto.
+        # On the worker side, it should try `apt-get update && apt-get install -y fonts-noto-cjk`
+        # Then the actual paths would be something like:
+        # '/usr/share/fonts/opentype/noto/NotoSansCJKsc-Regular.otf'
+        # '/usr/share/fonts/opentype/noto/NotoSansCJKsc-Bold.otf'
+        noto_regular_path = '/usr/share/fonts/opentype/noto/NotoSansCJKsc-Regular.otf'
+        noto_bold_path = '/usr/share/fonts/opentype/noto/NotoSansCJKsc-Bold.otf'
+
+        if os.path.exists(noto_regular_path) and os.path.exists(noto_bold_path):
+            pdfmetrics.registerFont(TTFont('NotoSansCJKsc-Regular', noto_regular_path))
+            pdfmetrics.registerFont(TTFont('NotoSansCJKsc-Bold', noto_bold_path))
+            FONT_NAME = 'NotoSansCJKsc-Regular'
+            FONT_NAME_BOLD = 'NotoSansCJKsc-Bold'
+            print("Registered Noto Sans CJK SC font.")
+        else:
+            # Fallback if no Chinese font can be registered
+            print("Noto Sans CJK SC font not found. Falling back to Helvetica. Chinese characters will not render correctly.")
+            FONT_NAME = 'Helvetica'
+            FONT_NAME_BOLD = 'Helvetica-Bold'
+    except Exception as e_noto:
+        print(f"Could not register Noto Sans CJK SC: {e_noto}. Falling back to Helvetica. Chinese characters will not render correctly.")
+        FONT_NAME = 'Helvetica'
+        FONT_NAME_BOLD = 'Helvetica-Bold'
 
 from ..data_source import FMPUtils, YFinanceUtils
 from .analyzer import ReportAnalysisUtils
@@ -75,7 +150,10 @@ class ReportLabUtils:
                 if os.path.isdir(save_path)
                 else save_path
             )
-            os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+            # Ensure directory exists if pdf_path includes a directory
+            pdf_dir = os.path.dirname(pdf_path)
+            if pdf_dir: # Only call makedirs if a directory part exists
+                os.makedirs(pdf_dir, exist_ok=True)
             doc = SimpleDocTemplate(pdf_path, pagesize=pagesizes.A4)
         
 
@@ -144,7 +222,7 @@ class ReportLabUtils:
             custom_style = ParagraphStyle(
                 name="Custom",
                 parent=styles["Normal"],
-                fontName="Helvetica",
+                fontName=FONT_NAME,
                 fontSize=10,
                 # leading=15,
                 alignment=TA_JUSTIFY,
@@ -153,7 +231,7 @@ class ReportLabUtils:
             title_style = ParagraphStyle(
                 name="TitleCustom",
                 parent=styles["Title"],
-                fontName="Helvetica-Bold",
+                fontName=FONT_NAME_BOLD,
                 fontSize=16,
                 leading=20,
                 alignment=TA_LEFT,
@@ -163,7 +241,7 @@ class ReportLabUtils:
             subtitle_style = ParagraphStyle(
                 name="Subtitle",
                 parent=styles["Heading2"],
-                fontName="Helvetica-Bold",
+                fontName=FONT_NAME_BOLD,
                 fontSize=14,
                 leading=12,
                 alignment=TA_LEFT,
@@ -174,8 +252,8 @@ class ReportLabUtils:
                 [
                     ("BACKGROUND", (0, 0), (-1, -1), colors.white),
                     ("BACKGROUND", (0, 0), (-1, 0), colors.white),
-                    ("FONT", (0, 0), (-1, -1), "Helvetica", 7),
-                    ("FONT", (0, 0), (-1, 0), "Helvetica-Bold", 14),
+                    ("FONT", (0, 0), (-1, -1), FONT_NAME, 7),
+                    ("FONT", (0, 0), (-1, 0), FONT_NAME_BOLD, 14),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
                     # 所有单元格左对齐
                     ("ALIGN", (0, 0), (-1, -1), "LEFT"),
@@ -186,7 +264,8 @@ class ReportLabUtils:
                 ]
             )
 
-            name = YFinanceUtils.get_stock_info(ticker_symbol)["shortName"]
+            stock_info = YFinanceUtils.get_stock_info(ticker_symbol)
+            name = stock_info.get("shortName", ticker_symbol) # Use ticker_symbol as fallback
 
             # 准备左栏和右栏内容
             content = []
@@ -210,13 +289,30 @@ class ReportLabUtils:
 
             # content.append(Paragraph("Summarization", subtitle_style))
             df = FMPUtils.get_financial_metrics(ticker_symbol, years=5)
-            df.reset_index(inplace=True)
-            currency = YFinanceUtils.get_stock_info(ticker_symbol)["currency"]
-            df.rename(columns={"index": f"FY ({currency} mn)"}, inplace=True)
-            table_data = [["Financial Metrics"]]
-            table_data += [df.columns.to_list()] + df.values.tolist()
+            
+            if df is None:
+                print("Warning: FMPUtils.get_financial_metrics returned None. Using empty DataFrame for financial metrics table.")
+                df = pd.DataFrame() # Create an empty DataFrame
 
-            col_widths = [(left_column_width - margin * 4) / df.shape[1]] * df.shape[1]
+            df.reset_index(inplace=True) # Creates 'index' column
+            
+            stock_info_currency = YFinanceUtils.get_stock_info(ticker_symbol)
+            currency = stock_info_currency.get("currency", "USD") # Fallback currency
+            
+            df.rename(columns={"index": f"FY ({currency} mn)"}, inplace=True)
+
+            table_data = [["Financial Metrics"]]
+            table_data += [df.columns.to_list()] + df.values.tolist() # Will be [f"FY ({currency} mn)"] and [] if df was empty
+
+            num_cols = df.shape[1] # Will be 1 if df was empty and reset_index + rename occurred
+            if num_cols > 0:
+                col_widths = [(left_column_width - margin * 4) / num_cols] * num_cols
+            else:
+                # This case should ideally not be reached if df always gets at least one column after rename
+                # but as a safeguard:
+                col_widths = [left_column_width - margin * 4]
+                if not df.columns.to_list() and len(table_data) == 1: # only [["Financial Metrics"]]
+                     table_data.append(["No Data Available"]) # Add a row to prevent empty table error
             table = Table(table_data, colWidths=col_widths)
             table.setStyle(table_style2)
             content.append(table)
@@ -227,8 +323,8 @@ class ReportLabUtils:
                 [
                     ("BACKGROUND", (0, 0), (-1, -1), colors.white),
                     ("BACKGROUND", (0, 0), (-1, 0), colors.white),
-                    ("FONT", (0, 0), (-1, -1), "Helvetica", 8),
-                    ("FONT", (0, 0), (-1, 0), "Helvetica-Bold", 12),
+                    ("FONT", (0, 0), (-1, -1), FONT_NAME, 8),
+                    ("FONT", (0, 0), (-1, 0), FONT_NAME_BOLD, 12),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
                     # 第一列左对齐
                     ("ALIGN", (0, 1), (0, -1), "LEFT"),

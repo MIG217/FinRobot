@@ -96,10 +96,19 @@ class YFinanceUtils:
 
     def get_analyst_recommendations(symbol: Annotated[str, "ticker symbol"]) -> tuple:
         """Fetches the latest analyst recommendations and returns the most common recommendation and its count."""
-        ticker = symbol
-        recommendations = ticker.recommendations
-        if recommendations.empty:
-            return None, 0  # No recommendations available
+        ticker = symbol # This is yf.Ticker object
+        try:
+            recommendations = ticker.recommendations
+            if recommendations is None or recommendations.empty: # Check for None as well
+                print(f"Warning: No analyst recommendations data found for {ticker.ticker}. Returning default.")
+                return "N/A", 0
+        except Exception as e: # Catch potential errors during API call (like HTTPError for unknown ticker)
+            print(f"Warning: Failed to fetch recommendations for {ticker.ticker}: {e}. Returning default.")
+            return "N/A", 0
+        
+        # Proceed if recommendations were fetched and are not empty
+        if recommendations.empty: # Double check, though covered by above
+            return "N/A", 0
 
         # Assuming 'period' column exists and needs to be excluded
         row_0 = recommendations.iloc[0, 1:]  # Exclude 'period' column if necessary

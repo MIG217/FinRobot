@@ -3,6 +3,7 @@ from textwrap import dedent
 from typing import Annotated, List
 from datetime import timedelta, datetime
 from ..data_source import YFinanceUtils, SECUtils, FMPUtils
+import pandas as pd # Add pandas import for pd.to_datetime
 
 
 def combine_prompt(instruction, resource, table_str=None):
@@ -357,28 +358,28 @@ class ReportAnalysisUtils:
         end = filing_date.strftime("%Y-%m-%d")
 
         hist = YFinanceUtils.get_stock_data(ticker_symbol, start, end)
+        info = YFinanceUtils.get_stock_info(ticker_symbol) # Moved up to ensure info is available for currency
 
-        # 获取其他相关信息
-        info = YFinanceUtils.get_stock_info(ticker_symbol)
-        close_price = hist["Close"].iloc[-1]
-
-        # Calculate the average daily trading volume
-        six_months_start = (filing_date - timedelta(weeks=26)).strftime("%Y-%m-%d")
-        hist_last_6_months = hist[
-            (hist.index >= six_months_start) & (hist.index <= end)
-        ]
-
-        # 计算这6个月的平均每日交易量
-        avg_daily_volume_6m = (
-            hist_last_6_months["Volume"].mean()
-            if not hist_last_6_months["Volume"].empty
-            else 0
-        )
-
-        fiftyTwoWeekLow = hist["High"].min()
-        fiftyTwoWeekHigh = hist["Low"].max()
-
-        # avg_daily_volume_6m = hist['Volume'].mean()
+        if hist.empty or hist["Close"].empty:
+            print(f"Warning: No historical data found for {ticker_symbol} between {start} and {end}. Using default values for key data.")
+            close_price = 0.0
+            avg_daily_volume_6m = 0.0
+            fiftyTwoWeekLow = 0.0
+            fiftyTwoWeekHigh = 0.0
+        else:
+            close_price = hist["Close"].iloc[-1]
+            six_months_start = (filing_date - timedelta(weeks=26)).strftime("%Y-%m-%d")
+            # Ensure correct filtering for hist_last_6_months using .loc for datetime index
+            hist_last_6_months = hist.loc[
+                (hist.index >= pd.to_datetime(six_months_start)) & (hist.index <= pd.to_datetime(end))
+            ]
+            avg_daily_volume_6m = (
+                hist_last_6_months["Volume"].mean()
+                if not hist_last_6_months.empty and not hist_last_6_months["Volume"].empty
+                else 0
+            )
+            fiftyTwoWeekLow = hist["Low"].min() # Corrected to Low for fiftyTwoWeekLow
+            fiftyTwoWeekHigh = hist["High"].max() # Corrected to High for fiftyTwoWeekHigh
 
         # convert back to str for function calling
         filing_date = filing_date.strftime("%Y-%m-%d")
@@ -387,21 +388,25 @@ class ReportAnalysisUtils:
         # print(f"Over the past 6 months, the average daily trading volume for {ticker_symbol} was: {avg_daily_volume_6m:.2f}")
         rating, _ = YFinanceUtils.get_analyst_recommendations(ticker_symbol)
         target_price = FMPUtils.get_target_price(ticker_symbol, filing_date)
+        
+        # Ensure info dictionary has 'currency' key, provide default if not
+        currency_symbol = info.get('currency', 'USD')
+
         result = {
-            "Rating": rating,
-            "Target Price": target_price,
-            f"6m avg daily vol ({info['currency']}mn)": "{:.2f}".format(
+            "Rating": rating if rating else "N/A", # Handle possible None rating
+            "Target Price": target_price if target_price else "N/A", # Handle possible None target_price
+            f"6m avg daily vol ({currency_symbol}mn)": "{:.2f}".format(
                 avg_daily_volume_6m / 1e6
             ),
-            f"Closing Price ({info['currency']})": "{:.2f}".format(close_price),
-            f"Market Cap ({info['currency']}mn)": "{:.2f}".format(
-                FMPUtils.get_historical_market_cap(ticker_symbol, filing_date) / 1e6
+            f"Closing Price ({currency_symbol})": "{:.2f}".format(close_price),
+            f"Market Cap ({currency_symbol}mn)": "{:.2f}".format(
+                (FMPUtils.get_historical_market_cap(ticker_symbol, filing_date) or 0) / 1e6 # Handle None
             ),
-            f"52 Week Price Range ({info['currency']})": "{:.2f} - {:.2f}".format(
+            f"52 Week Price Range ({currency_symbol})": "{:.2f} - {:.2f}".format(
                 fiftyTwoWeekLow, fiftyTwoWeekHigh
             ),
-            f"BVPS ({info['currency']})": "{:.2f}".format(
-                FMPUtils.get_historical_bvps(ticker_symbol, filing_date)
+            f"BVPS ({currency_symbol})": "{:.2f}".format(
+                FMPUtils.get_historical_bvps(ticker_symbol, filing_date) or 0 # Handle None
             ),
         }
         return result
