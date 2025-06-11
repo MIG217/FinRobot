@@ -37,6 +37,7 @@ class DeployedCapitalAnalyzer(bt.Analyzer):
 
 class BackTraderUtils:
 
+    @staticmethod
     def back_test(
         ticker_symbol: Annotated[
             str, "Ticker symbol of the stock (e.g., 'AAPL' for Apple)"
@@ -173,12 +174,12 @@ if __name__ == "__main__":
     end_date = "2012-12-31"
     ticker = "MSFT"
     # BackTraderUtils.back_test(
-    #     ticker, start_date, end_date, "SMA_CrossOver", {"fast": 10, "slow": 30}
+    #     ticker, start_date, end_date, "SMA_CrossOver", '{"fast": 10, "slow": 30}'
     # )
     BackTraderUtils.back_test(
         ticker,
         start_date,
         end_date,
         "test_module:TestStrategy",
-        {"exitbars": 5},
+        '{"exitbars": 5}',
     )

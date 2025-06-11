@@ -10,9 +10,9 @@ from functools import partial
 
 config_list_gpt4 = autogen.config_list_from_json(
     "OAI_CONFIG_LIST",
-    filter_dict={
-        "model": ["gpt-4-0125-preview"],
-    },
+    # filter_dict={
+    #     "model": ["gpt-4-0125-preview"],
+    # },
 )
 
 llm_config = {
@@ -21,7 +21,7 @@ llm_config = {
     "temperature": 0,
 }
 
-quant_group_config = json.load(open("quantitative_investment_group_config.json"))
+quant_group_config = json.load(open("/Users/mig217/FinRobot/experiments/quantitative_investment_group_config.json"))
 
 # user_proxy = autogen.UserProxyAgent(
 #     name="User",
@@ -40,13 +40,14 @@ group_descs = "\n\n".join(
 group_leader = autogen.AssistantAgent(
     name="Group_Leader",
     system_message="""
-    As a group leader, you are responsible for coordinating the team's efforts to achieve the project's objectives. 
-    You must ensure that the team is working together effectively and efficiently. 
-    Summarize the status of the whole project progess every time you respond, and assign task to one of the group members to progress the project. 
-    Orders should follow the format: \"[<name of staff>] <order>\" and appear at the end of your response.
-    After receiving feedback from the team members, check the progress of the task, and make sure the task is well completed before proceding to th next order.
-    If the task is not well completed, your order should be to provide assistance and guidance for the team members to complete it again.
-    Reply TERMINATE only when the whole project is done. Your team members are as follows:\n\n
+    作为小组组长，你负责协调团队的工作，以实现项目的目标。
+    你必须确保团队高效、协同地工作。
+    每次回复时，都要总结整个项目的进展情况，并为其中一位组员分配任务以推进项目进程。
+    指令应遵循以下格式：“[<成员姓名>] <指令内容>”，并出现在你回复的末尾。
+    在收到团队成员的反馈后，检查任务的进展情况，并确保任务在继续下一项指令之前已被良好完成。
+    如果任务未被良好完成，你的指令应为提供协助与指导，帮助团队成员重新完成该任务。
+    仅当整个项目完成时，才回复 TERMINATE。
+    你的团队成员如下：\n\n
     """
     + group_descs,
     llm_config=llm_config,
@@ -91,11 +92,11 @@ def order_message(pattern, recipient, messages, sender, config):
     else:
         order = full_order
     return f"""
-    Follow leader's order and complete the following task: {order}.
-    For coding tasks, provide python scripts and executor will run it for you.
-    Save your results or any intermediate data locally and let group leader know how to read them.
-    DO NOT include TERMINATE in your response until you have received the results from the execution of the Python scripts.
-    If the task cannot be done currently or need assistance from other members, report the reasons or requirements to group leader ended with TERMINATE. 
+    请遵循组长的指令并完成以下任务：{order}。
+    对于编程任务，请提供 Python 脚本，由执行器为你运行。
+    请将你的结果或任何中间数据保存在本地，并告知组长如何读取这些内容。
+    在尚未获得 Python 脚本执行结果之前，**请不要**在回复中包含 TERMINATE。
+    如果当前无法完成任务，或者需要其他成员的协助，请向组长报告原因或需求，并以 TERMINATE 结尾。
     """
     # For coding tasks, only use the functions you have been provided with.
 
@@ -115,7 +116,10 @@ for name, agent in quant_group.items():
         trigger=partial(order_trigger, f"[{name}]"),
     )
 
-quant_task = "Develop and test the feasibility of a quantitative investment strategy focusing on the Dow Jones 30 stocks, utilizing your multi-factor analysis expertise to identify potential investment opportunities and optimize the portfolio's performance. Ensure the strategy is robust, data-driven, and aligns with our risk management principles."
+quant_task = """
+开发并测试一个量化投资策略的可行性，该策略聚焦于道琼斯30指数成分股。利用你的多因子分析专业知识，识别潜在的投资机会，并优化投资组合的表现。
+确保该策略具有稳健性、以数据为驱动，并符合我们的风险管理原则。
+"""
 
 with Cache.disk() as cache:
     executor.initiate_chat(group_leader, message=quant_task, cache=cache)

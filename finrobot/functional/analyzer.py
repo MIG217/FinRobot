@@ -183,6 +183,7 @@ class ReportAnalysisUtils:
         save_to_file(prompt, save_path)
         return f"instruction & resources saved to {save_path}"
 
+
     def get_risk_assessment(
         ticker_symbol: Annotated[str, "ticker symbol"],
         fyear: Annotated[str, "fiscal year of the 10-K report"],
@@ -405,3 +406,4 @@ class ReportAnalysisUtils:
             ),
         }
         return result
+

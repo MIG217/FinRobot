@@ -23,7 +23,6 @@ from ..data_source import FMPUtils, YFinanceUtils
 from .analyzer import ReportAnalysisUtils
 from typing import Annotated
 
-
 class ReportLabUtils:
 
     def build_annual_report(
@@ -62,6 +61,10 @@ class ReportLabUtils:
         risk assessment, competitors analysis and share performance, PE & EPS performance charts all into a PDF report.
         """
         try:
+            # 注册中文字体 SimHei
+            from reportlab.pdfbase.ttfonts import TTFont
+            from reportlab.pdfbase import pdfmetrics
+            pdfmetrics.registerFont(TTFont('SimHei', '/Users/mig217/FinRobot/finrobot/functional/simhei.ttf'))
             # 2. 创建PDF并插入图像
             # 页面设置
             page_width, page_height = pagesizes.A4
@@ -144,16 +147,16 @@ class ReportLabUtils:
             custom_style = ParagraphStyle(
                 name="Custom",
                 parent=styles["Normal"],
-                fontName="Helvetica",
+                fontName="SimHei",
                 fontSize=10,
-                # leading=15,
                 alignment=TA_JUSTIFY,
+                wordWrap='CJK', # 处理字符换行问题
             )
 
             title_style = ParagraphStyle(
                 name="TitleCustom",
                 parent=styles["Title"],
-                fontName="Helvetica-Bold",
+                fontName="SimHei",
                 fontSize=16,
                 leading=20,
                 alignment=TA_LEFT,
@@ -163,7 +166,7 @@ class ReportLabUtils:
             subtitle_style = ParagraphStyle(
                 name="Subtitle",
                 parent=styles["Heading2"],
-                fontName="Helvetica-Bold",
+                fontName="SimHei",
                 fontSize=14,
                 leading=12,
                 alignment=TA_LEFT,
@@ -174,8 +177,8 @@ class ReportLabUtils:
                 [
                     ("BACKGROUND", (0, 0), (-1, -1), colors.white),
                     ("BACKGROUND", (0, 0), (-1, 0), colors.white),
-                    ("FONT", (0, 0), (-1, -1), "Helvetica", 7),
-                    ("FONT", (0, 0), (-1, 0), "Helvetica-Bold", 14),
+                    ("FONT", (0, 0), (-1, -1), "SimHei", 7),
+                    ("FONT", (0, 0), (-1, 0), "SimHei", 14),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
                     # 所有单元格左对齐
                     ("ALIGN", (0, 0), (-1, -1), "LEFT"),
@@ -187,7 +190,7 @@ class ReportLabUtils:
             )
 
             name = YFinanceUtils.get_stock_info(ticker_symbol)["shortName"]
-
+            # name = TuShareUtils.get_stock_info(ticker_symbol)["shortName"]
             # 准备左栏和右栏内容
             content = []
             # 标题
@@ -212,6 +215,7 @@ class ReportLabUtils:
             df = FMPUtils.get_financial_metrics(ticker_symbol, years=5)
             df.reset_index(inplace=True)
             currency = YFinanceUtils.get_stock_info(ticker_symbol)["currency"]
+            # currency = TuShareUtils.get_stock_info(ticker_symbol)["currency"]
             df.rename(columns={"index": f"FY ({currency} mn)"}, inplace=True)
             table_data = [["Financial Metrics"]]
             table_data += [df.columns.to_list()] + df.values.tolist()
@@ -227,8 +231,8 @@ class ReportLabUtils:
                 [
                     ("BACKGROUND", (0, 0), (-1, -1), colors.white),
                     ("BACKGROUND", (0, 0), (-1, 0), colors.white),
-                    ("FONT", (0, 0), (-1, -1), "Helvetica", 8),
-                    ("FONT", (0, 0), (-1, 0), "Helvetica-Bold", 12),
+                    ("FONT", (0, 0), (-1, -1), "SimHei", 8),
+                    ("FONT", (0, 0), (-1, 0), "SimHei", 12),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
                     # 第一列左对齐
                     ("ALIGN", (0, 1), (0, -1), "LEFT"),
@@ -395,3 +399,4 @@ class ReportLabUtils:
 
         except Exception:
             return traceback.format_exc()
+        

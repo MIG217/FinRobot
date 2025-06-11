@@ -7,18 +7,20 @@ from autogen import register_function
 from investment_group import group_config
 
 
+config_list_gpt4 = autogen.config_list_from_json(
+    "OAI_CONFIG_LIST",
+    # filter_dict={
+    #     "model": ["gpt-4-0125-preview"],
+    # },
+)
+
 llm_config = {
-    "config_list": autogen.config_list_from_json(
-        "../OAI_CONFIG_LIST",
-        filter_dict={
-            "model": ["gpt-4-0125-preview"],
-        },
-    ),
+    "config_list": config_list_gpt4,
     "cache_seed": 42,
     "temperature": 0,
 }
 
-register_keys_from_json("../config_api_keys")
+register_keys_from_json("config_api_keys")
 
 # group_config = json.load(open("investment_group.json"))
 

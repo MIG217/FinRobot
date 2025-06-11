@@ -11,8 +11,8 @@ backtrader
 sec_api
 
 # data handling
-numpy
-pandas
+numpy==1.26.4
+pandas==2.0.3
 pyPDF2
 reportlab
 pyautogen[retrievechat]
@@ -39,5 +39,5 @@ scikit_learn==1.5.0
 starlette==0.37.2
 tenacity==8.3.0
 tqdm==4.66.1
-typing_extensions==4.9.0
+typing_extensions>=4.9.0,<5
 unstructured==0.8.1

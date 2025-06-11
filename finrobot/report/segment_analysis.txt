@@ -1,0 +1,17 @@
+Income statement (Segment Analysis):
+Empty DataFrame
+Columns: []
+Index: []
+
+Resource: Failed to retrieve data: 429
+
+Instruction: 
+Identify the company's business segments and create a segment analysis using the Management's Discussion and Analysis 
+and the income statement, subdivided by segment with clear headings. Address revenue and net profit with specific data, 
+and calculate the changes. Detail strategic partnerships and their impacts, including details like the companies or organizations. 
+Describe product innovations and their effects on income growth. Quantify market share and its changes, or state market position 
+and its changes. Analyze market dynamics and profit challenges, noting any effects from national policy changes. Include the cost side, 
+detailing operational costs, innovation investments, and expenses from channel expansion, etc. Support each statement with evidence, 
+keeping each segment analysis concise and under 60 words, accurately sourcing information. For each segment, consolidate the most 
+significant findings into one clear, concise paragraph, excluding less critical or vaguely described aspects to ensure clarity and 
+reliance on evidence-backed information. For each segment, the output should be one single paragraph within 150 words.

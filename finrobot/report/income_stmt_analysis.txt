@@ -1,0 +1,18 @@
+Income statement:
+Empty DataFrame
+Columns: []
+Index: []
+
+Resource: Failed to retrieve data: 429
+
+Instruction: 
+Conduct a comprehensive analysis of the company's income statement for the current fiscal year. 
+Start with an overall revenue record, including Year-over-Year or Quarter-over-Quarter comparisons, 
+and break down revenue sources to identify primary contributors and trends. Examine the Cost of 
+Goods Sold for potential cost control issues. Review profit margins such as gross, operating, 
+and net profit margins to evaluate cost efficiency, operational effectiveness, and overall profitability. 
+Analyze Earnings Per Share to understand investor perspectives. Compare these metrics with historical 
+data and industry or competitor benchmarks to identify growth patterns, profitability trends, and 
+operational challenges. The output should be a strategic overview of the company’s financial health 
+in a single paragraph, less than 130 words, summarizing the previous analysis into 4-5 key points under 
+respective subheadings with specific discussion and strong data support.

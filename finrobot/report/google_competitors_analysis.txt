@@ -1,0 +1,126 @@
+
+
+0:
+GOOGL: EBITDA Margin       0.39
+EV/EBITDA          17.24
+FCF Conversion      1.25
+Gross Margin        0.58
+ROIC               25.8%
+Revenue           350018
+Revenue Growth      None
+Name: 0, dtype: object
+MSFT: EBITDA Margin       0.54
+EV/EBITDA          25.88
+FCF Conversion      1.35
+Gross Margin         0.7
+ROIC               22.6%
+Revenue           245122
+Revenue Growth      None
+Name: 0, dtype: object
+AAPL: EBITDA Margin       0.34
+EV/EBITDA          26.52
+FCF Conversion      1.26
+Gross Margin        0.46
+ROIC               44.3%
+Revenue           391035
+Revenue Growth      None
+Name: 0, dtype: object
+
+
+1:
+GOOGL: EBITDA Margin                     0.32
+EV/EBITDA                        18.04
+FCF Conversion                    1.38
+Gross Margin                      0.57
+ROIC                             22.4%
+Revenue                         307394
+Revenue Growth    (30739399999900, 1)%
+Name: 1, dtype: object
+MSFT: EBITDA Margin                      0.5
+EV/EBITDA                        24.36
+FCF Conversion                    1.21
+Gross Margin                      0.69
+ROIC                             22.9%
+Revenue                         211915
+Revenue Growth    (21191499999900, 1)%
+Name: 1, dtype: object
+AAPL: EBITDA Margin                     0.33
+EV/EBITDA                        22.07
+FCF Conversion                    1.14
+Gross Margin                      0.44
+ROIC                             43.4%
+Revenue                         383285
+Revenue Growth    (38328499999900, 1)%
+Name: 1, dtype: object
+
+
+2:
+GOOGL: EBITDA Margin                      0.3
+EV/EBITDA                        13.63
+FCF Conversion                    1.53
+Gross Margin                      0.55
+ROIC                             21.1%
+Revenue                         282836
+Revenue Growth    (28283599999900, 1)%
+Name: 2, dtype: object
+MSFT: EBITDA Margin                     0.51
+EV/EBITDA                        19.68
+FCF Conversion                    1.22
+Gross Margin                      0.68
+ROIC                             26.6%
+Revenue                         198270
+Revenue Growth    (19826999999900, 1)%
+Name: 2, dtype: object
+AAPL: EBITDA Margin                     0.33
+EV/EBITDA                        19.52
+FCF Conversion                    1.22
+Gross Margin                      0.43
+ROIC                             45.2%
+Revenue                         394328
+Revenue Growth    (39432799999900, 1)%
+Name: 2, dtype: object
+
+
+3:
+GOOGL: EBITDA Margin                      0.4
+EV/EBITDA                        18.73
+FCF Conversion                    1.21
+Gross Margin                      0.57
+ROIC                             22.2%
+Revenue                         257637
+Revenue Growth    (25763699999900, 1)%
+Name: 3, dtype: object
+MSFT: EBITDA Margin                     0.51
+EV/EBITDA                        24.64
+FCF Conversion                    1.25
+Gross Margin                      0.69
+ROIC                             23.8%
+Revenue                         168088
+Revenue Growth    (16808799999900, 1)%
+Name: 3, dtype: object
+AAPL: EBITDA Margin                     0.34
+EV/EBITDA                        20.75
+FCF Conversion                     1.1
+Gross Margin                      0.42
+ROIC                             38.9%
+Revenue                         365817
+Revenue Growth    (36581699999900, 1)%
+Name: 3, dtype: object
+
+
+Resource: Financial metrics for GOOGL and ['MSFT', 'AAPL'].
+
+Instruction: 
+Analyze the financial metrics for {company}/ticker_symbol and its competitors: {competitors} across multiple years (indicated as 0, 1, 2, 3, with 0 being the latest year and 3 the earliest year). Focus on the following metrics: EBITDA Margin, EV/EBITDA, FCF Conversion, Gross Margin, ROIC, Revenue, and Revenue Growth. 
+For each year: Year-over-Year Trends: Identify and discuss the trends for each metric from the earliest year (3) to the latest year (0) for {company}. But when generating analysis, you need to write 1: year 3 = year 2023, 2: year 2 = year 2022, 3: year 1 = year 2021 and 4: year 0 = year 2020. Highlight any significant improvements, declines, or stability in these metrics over time.
+Competitor Comparison: For each year, compare {company} against its {competitors} for each metric. Evaluate how {company} performs relative to its {competitors}, noting where it outperforms or lags behind.
+Metric-Specific Insights:
+
+EBITDA Margin: Discuss the profitability of {company} compared to its {competitors}, particularly in the most recent year.
+EV/EBITDA: Provide insights on the valuation and whether {company} is over or undervalued compared to its {competitors} in each year.
+FCF Conversion: Evaluate the cash flow efficiency of {company} relative to its {competitors} over time.
+Gross Margin: Analyze the cost efficiency and profitability in each year.
+ROIC: Discuss the return on invested capital and what it suggests about the company's efficiency in generating returns from its investments, especially focusing on recent trends.
+Revenue and Revenue Growth: Provide a comprehensive view of {company}’s revenue performance and growth trajectory, noting any significant changes or patterns.
+Conclusion: Summarize the overall financial health of {company} based on these metrics. Discuss how {company}’s performance over these years and across these metrics might justify or contradict its current market valuation (as reflected in the EV/EBITDA ratio).
+Avoid using any bullet points.

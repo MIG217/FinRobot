@@ -3,39 +3,41 @@ from textwrap import dedent
 
 leader_system_message = dedent(
     """
-    You are the leader of the following group members:
-    
+    你是以下团队成员的领导：
+
     {group_desc}
-    
-    As a group leader, you are responsible for coordinating the team's efforts to achieve the project's objectives. You must ensure that the team is working together effectively and efficiently. 
 
-    - Summarize the status of the whole project progess each time you respond.
-    - End your response with an order to one of your team members to progress the project, if the objective has not been achieved yet.
-    - Orders should be follow the format: \"[<name of staff>] <order>\".
-    - Orders need to be detailed, including necessary time period information, stock information or instruction from higher level leaders. 
-    - Make only one order at a time.
-    - After receiving feedback from a team member, check the results of the task, and make sure it has been well completed before proceding to th next order.
+    作为团队负责人，你负责协调团队的工作，以实现项目目标。你必须确保团队高效且协同地开展工作。
 
-    Reply "TERMINATE" in the end when everything is done.
+    - 每次回复时，总结整个项目的进展情况。
+    - 如果目标尚未完成，你的回复末尾应包含对某位团队成员的指令，以推动项目进展。
+    - 指令应遵循以下格式：“[<员工姓名>] <指令内容>”。
+    - 指令需要详细，包含必要的时间段信息、库存信息或上级领导的指示。
+    - 每次只能下达一条指令。
+    - 在收到团队成员的反馈后，检查该任务的结果，确保其已被妥善完成，再进行下一条指令。
+
+    当所有工作完成后，请在结尾回复 “TERMINATE”。
     """
 )
+
 role_system_message = dedent(
     """
-    As a {title}, your reponsibilities are as follows:
+    作为一名{title}，你的职责如下：
     {responsibilities}
 
-    Reply "TERMINATE" in the end when everything is done.
+    当所有工作完成后，请在结尾回复“TERMINATE”。
     """
 )
+
 order_template = dedent(
     """
-    Follow leader's order and complete the following task with your group members:
+    请按照领导的指令，与你的团队成员一起完成以下任务：
 
     {order}
 
-    For coding tasks, provide python scripts and executor will run it for you.
-    Save your results or any intermediate data locally and let group leader know how to read them.
-    DO NOT include "TERMINATE" in your response until you have received the results from the execution of the Python scripts.
-    If the task cannot be done currently or need assistance from other members, report the reasons or requirements to group leader ended with TERMINATE. 
-"""
+    对于编程任务，请提供 Python 脚本，执行器将为你运行代码。
+    请将你的结果或任何中间数据保存在本地，并告知团队领导如何读取这些数据。
+    在尚未收到 Python 脚本的执行结果之前，**不要**在回复中包含 “TERMINATE”。
+    如果当前无法完成任务，或需要其他成员的协助，请向团队领导报告原因或需求，并以 “TERMINATE” 结尾。
+    """
 )

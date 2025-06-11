@@ -1,24 +1,27 @@
 [
     {
-        "model": "gpt-4-0125-preview",
-        "api_key": "<your OpenAI API key here>"
+        "model": "qwen-max-2025-01-25",
+        "api_key": ###,
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     },
     {
-        "model": "gpt-4-1106-vision-preview",
-        "api_key": "<your OpenAI API key here>"
+        "model": "qwen-turbo-2025-02-11",
+        "api_key": "###",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
     },
     {
-        "model": "<your Azure OpenAI deployment name>",
-        "api_key": "<your Azure OpenAI API key here>",
-        "base_url": "<your Azure OpenAI API base here>",
-        "api_type": "azure",
-        "api_version": "2024-02-15-preview"
+        "model": "deepseek-chat",
+        "api_key": "###",
+        "base_url": "https://api.deepseek.com"
     },
     {
-        "model": "<your Azure OpenAI deployment name>",
-        "api_key": "<your Azure OpenAI API key here>",
-        "base_url": "<your Azure OpenAI API base here>",
-        "api_type": "azure",
-        "api_version": "2024-02-15-preview"
+        "model": "glm-4-flashx-250414",
+        "api_key": "###",
+        "base_url": "https://open.bigmodel.cn/api/paas/v4/"
+    },
+    {
+        "model": "gemini-2.0-flash",
+        "api_key": "###",
+        "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/"
     }
 ]
